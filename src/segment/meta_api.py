@@ -99,9 +99,11 @@ def segment_still_with_sam31(image_path: str, prompt: str, api_key: str,
                              timeout: int = 120) -> np.ndarray | None:
     """Segment one still with SAM 3.1. Returns a boolean mask or None.
 
-    Raises on transport or HTTP failure; the caller decides what an
-    unreachable live call means (the pipeline falls back to a REVIEW,
-    never a silent pass).
+    Raises on transport or HTTP failure. The CLI catches that failure
+    and turns it into a REVIEW verdict: a failed live call is never a
+    silent pass and never a crash. An HTTP 200 response whose output
+    carries no mask record returns None, which the pipeline treats as
+    no mask found (the attempt-2 outcome, 2026-11-01).
     """
     base = (base_url or DEFAULT_BASE_URL).rstrip("/")
     payload = {

@@ -9,10 +9,15 @@ Run from the repository root:
       --object "brass lamp" --judge jacket_identity
 
 Modes: fixture (default, color-key segmentation from the bundle's
-targets.json) and live (SAM 3.1 through the Meta Model API, key read
-from the repo .env). Verdicts are printed as a report and written as
-JSON when --out is given. Evidence overlays are written when
---out-dir is given.
+targets.json) and live (SAM 3.1 through the Meta Model API). Live
+mode is unverified; see the Status section of the README before
+relying on it. In this workspace the credential is held by the
+registered Meta Model API connector, not in a file; the .env key
+route below is the standalone fallback for other runners. A live
+call that fails produces a REVIEW, never a silent pass, and never
+a traceback. Verdicts are printed as a report and written as JSON
+when --out is given. Evidence overlays are written when --out-dir
+is given.
 """
 
 from __future__ import annotations
@@ -22,11 +27,15 @@ import json
 import os
 import sys
 
+import requests
+from PIL import UnidentifiedImageError
+
 from .compare.compare import compare_target, overall_verdict
 from .ingest.ingest import build_job, load_still
 from .judge.judge import FixtureJudge, settle
 from .ledger.ledger import validate_ledger
-from .segment.segment import ColorKeySegmenter, MetaSAMSegmenter, save_overlay
+from .segment.segment import (ColorKeySegmenter, MetaSAMSegmenter,
+                              Segmentation, save_overlay)
 from .ui.review import render_report, run_review
 
 
@@ -62,6 +71,24 @@ def _segmenter(mode: str, targets: dict | None):
     return ColorKeySegmenter(targets)
 
 
+def _segment_or_review(segmenter, image_path: str, object_name: str,
+                       mode: str):
+    """Run one segmentation.
+
+    In live mode a failed call is data, not a crash: it returns a
+    not-found segmentation plus the error, so the verdict layer can
+    raise a REVIEW. In fixture mode errors propagate to the clean
+    error path in main(); a local bug must not dress up as a verdict.
+    """
+    try:
+        return segmenter.segment(image_path, object_name), None
+    except requests.RequestException as exc:
+        if mode != "live":
+            raise
+        return Segmentation(object_name=object_name, found=False,
+                            mask=None, measurement=None), str(exc)
+
+
 def cmd_check_still(args) -> int:
     still = load_still(args.image)
     targets = None
@@ -70,7 +97,18 @@ def cmd_check_still(args) -> int:
         targets = {args.object: {"color": list(rgb),
                                  "tolerance": args.tolerance}}
     segmenter = _segmenter(args.mode, targets)
-    seg = segmenter.segment(args.image, args.object)
+    seg, live_error = _segment_or_review(segmenter, args.image,
+                                         args.object, args.mode)
+    if live_error is not None:
+        verdict = {"object": args.object, "verdict": "REVIEW",
+                   "reason": "Live segmentation call failed "
+                             f"({live_error}). Cannot verify; raised "
+                             "to the human.",
+                   "measurement": None}
+        print(json.dumps({"still": args.image,
+                          "size": [still.width, still.height],
+                          **verdict}, indent=2))
+        return 0
     if not seg.found:
         verdict = {"object": args.object, "verdict": "REVIEW",
                    "reason": "No mask found. Cannot verify; raised to the human.",
@@ -110,8 +148,14 @@ def cmd_compare(args) -> int:
             brief_text = fh.read()
     job = build_job(ledger_a["scene_id"], take_a, take_b, brief_text, args.object)
     segmenter = _segmenter(args.mode, targets)
-    seg_a = segmenter.segment(take_a, args.object)
-    seg_b = segmenter.segment(take_b, args.object)
+    seg_a, err_a = _segment_or_review(segmenter, take_a, args.object,
+                                      args.mode)
+    seg_b, err_b = _segment_or_review(segmenter, take_b, args.object,
+                                      args.mode)
+    for take_id, err in (("take_a", err_a), ("take_b", err_b)):
+        if err is not None:
+            print(f"warning: live segmentation failed for {take_id} "
+                  f"({err}); treated as no mask found.", file=sys.stderr)
     record = compare_target(ledger_a, ledger_b, seg_a, seg_b, args.object)
     judgments = []
     if args.judge:
@@ -165,7 +209,16 @@ def main(argv: list[str] | None = None) -> int:
     p_cmp.set_defaults(fn=cmd_compare)
 
     args = parser.parse_args(argv)
-    return args.fn(args)
+    try:
+        return args.fn(args)
+    except (FileNotFoundError, ValueError, KeyError, json.JSONDecodeError,
+            UnidentifiedImageError) as exc:
+        # Malformed or missing inputs get a clean error, not a
+        # traceback: these are the inputs a judge will actually feed
+        # the tool. SystemExit (schema failures, missing keys) keeps
+        # its own message and is not caught here.
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

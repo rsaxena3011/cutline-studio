@@ -3,11 +3,15 @@
 Rules, in plain words:
 - An object the ledger says is present in one take and missing in the
   other is a BLOCK. The ledger lines are the evidence.
+- An object one ledger does not record at all is a REVIEW: the ledger
+  itself is incomplete, so the check cannot settle. It is never a
+  silent pass.
 - An object the ledger says is present in both takes, but for which
   segmentation finds no mask in one of them, is a REVIEW: cannot
   verify. It is never a silent pass.
 - Mask measurements that move beyond the thresholds (area change,
-  centroid shift) are a BLOCK with the measurements attached.
+  centroid shift on either axis) are a BLOCK with the measurements
+  attached.
 - A mask touching the frame edge is a REVIEW, a cropping warning. Edge
   contact is never treated as proof of cropping on its own.
 - Anything the rules cannot settle is left for the judge layer or the
@@ -20,7 +24,7 @@ No model calls live here.
 from __future__ import annotations
 
 AREA_CHANGE_BLOCK = 0.35        # relative area change beyond this blocks
-CENTROID_SHIFT_BLOCK = 0.10     # fraction of frame width beyond this blocks
+CENTROID_SHIFT_BLOCK = 0.10     # centroid shift (x over width, y over height) beyond this blocks
 
 SEVERITY_ORDER = {"ALLOW": 0, "REVIEW": 1, "BLOCK": 2}
 
@@ -39,6 +43,11 @@ def compare_target(ledger_a: dict, ledger_b: dict,
     """
     from ..ledger.ledger import diff_ledgers
 
+    if ledger_a.get("scene_id") != ledger_b.get("scene_id"):
+        raise ValueError(
+            "ledgers describe different scenes: "
+            f"{ledger_a.get('scene_id')!r} vs {ledger_b.get('scene_id')!r}")
+
     flags: list[dict] = []
     objs_a = {o["name"]: o for o in ledger_a.get("objects", [])}
     objs_b = {o["name"]: o for o in ledger_b.get("objects", [])}
@@ -48,7 +57,22 @@ def compare_target(ledger_a: dict, ledger_b: dict,
     ledger_diffs = [d for d in diff_ledgers(ledger_a, ledger_b)
                     if d.get("object") == target_object]
 
-    if present_a is not None and present_b is not None and present_a != present_b:
+    if present_a is None or present_b is None:
+        unrecorded = []
+        if present_a is None:
+            unrecorded.append(ledger_a["take_id"])
+        if present_b is None:
+            unrecorded.append(ledger_b["take_id"])
+        flags.append(_flag(
+            "REVIEW", "cannot_verify",
+            f"{target_object} is not recorded in the ledger for: "
+            f"{', '.join(unrecorded)}. The check cannot settle on an "
+            f"incomplete ledger. Raised to the human.",
+            {"recorded": {"take_a": present_a is not None,
+                          "take_b": present_b is not None},
+             "ledger_diffs": ledger_diffs},
+        ))
+    elif present_a != present_b:
         missing_take = ledger_b["take_id"] if present_a else ledger_a["take_id"]
         flags.append(_flag(
             "BLOCK", "object_missing",
@@ -73,8 +97,16 @@ def compare_target(ledger_a: dict, ledger_b: dict,
             ma, mb = seg_a.measurement, seg_b.measurement
             area_a, area_b = ma["area_px"], mb["area_px"]
             area_change = (abs(area_b - area_a) / area_a) if area_a else 0.0
-            shift_fraction = abs(mb["centroid"]["x"] - ma["centroid"]["x"]) \
-                if ma["centroid"] and mb["centroid"] else 0.0
+            # Movement on either axis counts: x shift as a fraction of
+            # frame width, y shift as a fraction of frame height. The
+            # larger of the two is the shift the rule judges.
+            if ma["centroid"] and mb["centroid"]:
+                shift_fraction = max(
+                    abs(mb["centroid"]["x"] - ma["centroid"]["x"]),
+                    abs(mb["centroid"]["y"] - ma["centroid"]["y"]),
+                )
+            else:
+                shift_fraction = 0.0
             # An area shrink in a take whose mask touches the frame edge
             # is explained by the object leaving the frame; it belongs to
             # the cropping warning below, not to a size-change block.
@@ -94,9 +126,9 @@ def compare_target(ledger_a: dict, ledger_b: dict,
                 flags.append(_flag(
                     "BLOCK", "mask_moved",
                     f"{target_object} mask centroid moved by "
-                    f"{shift_fraction:.0%} of frame width across takes.",
+                    f"{shift_fraction:.0%} of the frame across takes.",
                     {"centroid": {"take_a": ma["centroid"], "take_b": mb["centroid"]},
-                     "shift_fraction_of_width": round(shift_fraction, 4)},
+                     "shift_fraction": round(shift_fraction, 4)},
                 ))
             if ma["touches_edge"] or mb["touches_edge"]:
                 evidence = {"edge_contact": {"take_a": ma["edge_contact"],

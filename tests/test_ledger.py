@@ -38,6 +38,15 @@ class TestLedger(unittest.TestCase):
         b = make_ledger("take_b")
         self.assertEqual(diff_ledgers(a, b), [])
 
+    def test_duplicate_object_names_are_rejected(self):
+        # Review round 1, R1-06: name-keyed consumers would silently
+        # keep only the last of two same-named entries.
+        led = make_ledger("take_a")
+        led["objects"].append({"name": "brass lamp", "category": "prop",
+                               "present": False})
+        errors = validate_ledger(led)
+        self.assertTrue(any("duplicates" in e for e in errors))
+
     def test_presence_diff_is_verdict_grade(self):
         a = make_ledger("take_a", lamp_present=True)
         b = make_ledger("take_b", lamp_present=False)

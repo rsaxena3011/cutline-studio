@@ -42,6 +42,24 @@ class TestFixtureBundle(unittest.TestCase):
         self.assertEqual(record["verdict"], "ALLOW")
         self.assertEqual(record["decision"], "same_item")
 
+    def test_fabricated_citations_fall_back_to_review(self):
+        # Review round 1, R1-07: citations must resolve, not merely
+        # exist. A judgment citing a frame or a ledger line that is
+        # not in the bundle is treated as no judgment at all.
+        judge = FixtureJudge(BUNDLE)
+        real = judge.answer("jacket_identity")
+        bad_frame = json.loads(json.dumps(real))
+        bad_frame["citations"]["frames"] = ["take_zz.png"]
+        judge.judgments["bad_frame"] = bad_frame
+        self.assertEqual(settle("bad_frame", judge.answer("bad_frame"))
+                         ["verdict"], "REVIEW")
+        bad_line = json.loads(json.dumps(real))
+        bad_line["citations"]["ledger_lines"] = [
+            "take_a.objects[golden lamp]", "take_b.objects[golden lamp]"]
+        judge.judgments["bad_line"] = bad_line
+        self.assertEqual(settle("bad_line", judge.answer("bad_line"))
+                         ["verdict"], "REVIEW")
+
 
 if __name__ == "__main__":
     unittest.main()

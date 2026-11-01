@@ -2,10 +2,10 @@
 
 Two engines behind one interface:
 
-- FixtureSegmenter: the default demo path. Segments a named object in a
-  still by the color key recorded in the fixture bundle, and computes
-  the real mask from the real pixels. Used so a review never depends on
-  a live API call.
+- ColorKeySegmenter: the fixture engine, and the default demo path.
+  Segments a named object in a still by the color key recorded in the
+  fixture bundle, and computes the real mask from the real pixels.
+  Used so a review never depends on a live API call.
 - MetaSAMSegmenter: the live path. SAM 3.1 through the Meta Model API.
   See meta_api.py for the wire call; this class only adapts its result
   into the shared measurement record.

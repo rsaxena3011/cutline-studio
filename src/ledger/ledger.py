@@ -32,12 +32,18 @@ def validate_ledger(ledger: dict) -> list[str]:
         errors.append("source must be an object")
     objects = ledger.get("objects")
     if isinstance(objects, list):
+        seen_names: set = set()
         for i, obj in enumerate(objects):
             if not isinstance(obj, dict):
                 errors.append(f"objects[{i}] is not an object")
                 continue
             if "name" not in obj:
                 errors.append(f"objects[{i}] missing required field: name")
+            elif obj["name"] in seen_names:
+                errors.append(
+                    f"objects[{i}] duplicates object name: {obj['name']}")
+            else:
+                seen_names.add(obj["name"])
             if "present" not in obj:
                 errors.append(f"objects[{i}] missing required field: present")
             elif not isinstance(obj["present"], bool):

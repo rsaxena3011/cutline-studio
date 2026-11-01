@@ -19,7 +19,11 @@ def render_report(result: dict) -> str:
     for record in result["objects"]:
         lines.append(f"Object: {record['object']}  Verdict: {record['verdict']}")
         if not record["flags"]:
-            lines.append("  No flags. Measurements within tolerance.")
+            measurements = record.get("measurements") or {}
+            if measurements.get("take_a") and measurements.get("take_b"):
+                lines.append("  No flags. Measurements within tolerance.")
+            else:
+                lines.append("  No flags.")
         for flag in record["flags"]:
             lines.append(f"  [{flag['severity']}] {flag['rule']}: {flag['message']}")
             lines.append(f"    evidence: {json.dumps(flag['evidence'], default=str)}")

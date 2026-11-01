@@ -74,6 +74,41 @@ class TestCompareRules(unittest.TestCase):
         self.assertEqual(record["verdict"], "BLOCK")
         self.assertIn("mask_area_change", {f["rule"] for f in record["flags"]})
 
+    def test_unrecorded_object_is_review_never_allow(self):
+        # Review round 1, R1-01: the target is missing from ledger_b's
+        # object list entirely. The old code returned a silent ALLOW.
+        a = make_ledger("take_a")
+        b = make_ledger("take_b")
+        b["objects"] = [o for o in b["objects"]
+                        if o["name"] != "brass lamp"]
+        record = compare_target(a, b, seg(True, block_mask(50, 70)),
+                                seg(False), "brass lamp")
+        self.assertEqual(record["verdict"], "REVIEW")
+        self.assertEqual(record["flags"][0]["rule"], "cannot_verify")
+
+    def test_vertical_move_blocks(self):
+        # Review round 1, R1-02: movement is checked on both axes.
+        # Same-size mask moved down by 40 percent of frame height.
+        a = make_ledger("take_a")
+        b = make_ledger("take_b")
+        record = compare_target(
+            a, b,
+            seg(True, block_mask(50, 70, y0=10, y1=30)),
+            seg(True, block_mask(50, 70, y0=50, y1=70)),
+            "brass lamp")
+        self.assertEqual(record["verdict"], "BLOCK")
+        self.assertIn("mask_moved", {f["rule"] for f in record["flags"]})
+
+    def test_scene_mismatch_is_an_error(self):
+        # Review round 1, R1-03: two takes of different scenes must
+        # not compare at all.
+        a = make_ledger("take_a")
+        b = make_ledger("take_b")
+        b["scene_id"] = "a-different-scene"
+        with self.assertRaises(ValueError):
+            compare_target(a, b, seg(True, block_mask(50, 70)),
+                           seg(True, block_mask(50, 70)), "brass lamp")
+
 
 if __name__ == "__main__":
     unittest.main()
