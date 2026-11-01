@@ -1,0 +1,37 @@
+{
+  "scene_id": "studio-desk-01",
+  "take_id": "take_a",
+  "source": {
+    "kind": "still",
+    "frame_time_seconds": null
+  },
+  "objects": [
+    {
+      "name": "brass lamp",
+      "category": "prop",
+      "present": true,
+      "description": "Brass lamp on the desk, right of the presenter",
+      "screen_region": "center-right"
+    },
+    {
+      "name": "sponsor logo",
+      "category": "logo",
+      "present": true,
+      "description": "Sponsor logo board, top right",
+      "screen_region": "top-right"
+    },
+    {
+      "name": "presenter jacket",
+      "category": "wardrobe",
+      "present": true,
+      "description": "Blue jacket",
+      "screen_region": "left"
+    }
+  ],
+  "beats": [
+    {
+      "beat": "presenter introduces the sponsor",
+      "observed": true
+    }
+  ]
+}

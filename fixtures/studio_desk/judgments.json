@@ -1,0 +1,18 @@
+{
+  "jacket_identity": {
+    "question": "Is the jacket in take_b the same jacket as in take_a?",
+    "decision": "same_item",
+    "verdict_effect": "allow",
+    "rationale": "Both ledgers describe the same blue jacket. The shade shift is consistent with a lighting change, and the mask position and size are stable across takes.",
+    "citations": {
+      "ledger_lines": [
+        "take_a.objects[presenter jacket]",
+        "take_b.objects[presenter jacket]"
+      ],
+      "frames": [
+        "take_a.png",
+        "take_b.png"
+      ]
+    }
+  }
+}

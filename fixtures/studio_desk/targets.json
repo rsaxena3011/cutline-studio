@@ -1,0 +1,28 @@
+{
+  "objects": {
+    "brass lamp": {
+      "color": [
+        212,
+        160,
+        23
+      ],
+      "tolerance": 50
+    },
+    "sponsor logo": {
+      "color": [
+        245,
+        245,
+        245
+      ],
+      "tolerance": 40
+    },
+    "presenter jacket": {
+      "color": [
+        58,
+        104,
+        216
+      ],
+      "tolerance": 70
+    }
+  }
+}
