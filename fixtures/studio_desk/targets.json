@@ -23,6 +23,14 @@
         216
       ],
       "tolerance": 70
+    },
+    "desk plant": {
+      "color": [
+        46,
+        139,
+        87
+      ],
+      "tolerance": 40
     }
   }
 }

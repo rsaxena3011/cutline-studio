@@ -1,12 +1,15 @@
 """Generate the studio_desk fixture bundle: two synthetic takes of one scene.
 
-Take A is the clean reference. Take B plants two continuity errors and
-one near miss:
+Take A is the clean reference. Take B plants two continuity errors,
+one near miss, and one unverifiable case:
 - the brass lamp is gone from the desk (a BLOCK: missing object),
 - the sponsor logo board has drifted so its mask touches the right
   frame edge (a REVIEW: cropping warning, not proof),
 - the presenter's jacket is a lighter shade under changed lighting
-  (a judgment case: same jacket, cited, ALLOW).
+  (a judgment case: same jacket, cited, ALLOW),
+- the desk plant is drawn in take A only, while both ledgers record
+  it as present (a REVIEW: cannot verify; the ledger claims it, no
+  mask can settle it, added in review round 2 for demo beat 6).
 
 The drawings are deliberately simple so the color keys in targets.json
 segment them exactly; the pipeline still computes every mask and
@@ -32,15 +35,21 @@ LOGO_WHITE = (245, 245, 245)
 INK = (30, 30, 30)
 JACKET_A = (36, 86, 200)
 JACKET_B = (91, 132, 224)
+PLANT_GREEN = (46, 139, 87)
+PLANT_POT = (170, 80, 50)
 
 
-def draw_scene(jacket, with_lamp: bool, logo_x: int) -> Image.Image:
+def draw_scene(jacket, with_lamp: bool, logo_x: int,
+               with_plant: bool = False) -> Image.Image:
     img = Image.new("RGB", (W, H), WALL)
     d = ImageDraw.Draw(img)
     d.rectangle([0, 270, W, H], fill=FLOOR)
     d.rectangle([120, 250, 560, 320], fill=DESK)          # desk
     d.ellipse([80, 70, 130, 120], fill=SKIN)              # head
     d.rectangle([60, 120, 150, 280], fill=jacket)         # jacket / torso
+    if with_plant:
+        d.ellipse([472, 196, 508, 232], fill=PLANT_GREEN)  # plant leaves
+        d.rectangle([480, 230, 500, 252], fill=PLANT_POT)  # plant pot
     if with_lamp:
         d.rectangle([425, 195, 435, 255], fill=GOLD)      # lamp stem
         d.polygon([(405, 195), (455, 195), (443, 162), (417, 162)], fill=GOLD)
@@ -53,7 +62,7 @@ def draw_scene(jacket, with_lamp: bool, logo_x: int) -> Image.Image:
 def main() -> None:
     out_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_desk")
     os.makedirs(out_dir, exist_ok=True)
-    draw_scene(JACKET_A, with_lamp=True, logo_x=470).save(
+    draw_scene(JACKET_A, with_lamp=True, logo_x=470, with_plant=True).save(
         os.path.join(out_dir, "take_a.png"))
     draw_scene(JACKET_B, with_lamp=False, logo_x=545).save(
         os.path.join(out_dir, "take_b.png"))
@@ -67,6 +76,9 @@ def main() -> None:
          "screen_region": "top-right"},
         {"name": "presenter jacket", "category": "wardrobe", "present": True,
          "description": "Blue jacket", "screen_region": "left"},
+        {"name": "desk plant", "category": "prop", "present": True,
+         "description": "Small plant on the desk, right of the lamp",
+         "screen_region": "center-right"},
     ]
     beats = [{"beat": "presenter introduces the sponsor", "observed": True}]
 
@@ -90,6 +102,7 @@ def main() -> None:
         "brass lamp": {"color": list(GOLD), "tolerance": 50},
         "sponsor logo": {"color": list(LOGO_WHITE), "tolerance": 40},
         "presenter jacket": {"color": [58, 104, 216], "tolerance": 70},
+        "desk plant": {"color": list(PLANT_GREEN), "tolerance": 40},
     }}
     with open(os.path.join(out_dir, "targets.json"), "w", encoding="utf-8") as fh:
         json.dump(targets, fh, indent=2)
@@ -114,7 +127,8 @@ def main() -> None:
         fh.write("Studio desk scene. The presenter introduces the sponsor. "
                  "The brass lamp stays on the desk. The sponsor logo board "
                  "stays fully inside the frame. The presenter wears the "
-                 "blue jacket throughout.\n")
+                 "blue jacket throughout. A small desk plant sits to the "
+                 "right of the lamp.\n")
     print(f"bundle written to {out_dir}")
 
 

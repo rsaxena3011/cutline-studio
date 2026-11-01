@@ -26,6 +26,13 @@
       "present": true,
       "description": "Blue jacket",
       "screen_region": "left"
+    },
+    {
+      "name": "desk plant",
+      "category": "prop",
+      "present": true,
+      "description": "Small plant on the desk, right of the lamp",
+      "screen_region": "center-right"
     }
   ],
   "beats": [

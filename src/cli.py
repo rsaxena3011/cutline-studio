@@ -30,7 +30,7 @@ import sys
 import requests
 from PIL import UnidentifiedImageError
 
-from .compare.compare import compare_target, overall_verdict
+from .compare.compare import beat_flags, compare_target, overall_verdict
 from .ingest.ingest import build_job, load_still
 from .judge.judge import FixtureJudge, settle
 from .ledger.ledger import validate_ledger
@@ -157,15 +157,25 @@ def cmd_compare(args) -> int:
             print(f"warning: live segmentation failed for {take_id} "
                   f"({err}); treated as no mask found.", file=sys.stderr)
     record = compare_target(ledger_a, ledger_b, seg_a, seg_b, args.object)
+    records = [record]
+    scene_beats = beat_flags(ledger_a, ledger_b)
+    if scene_beats:
+        records.append({
+            "object": "(scene beats)",
+            "verdict": "REVIEW",
+            "flags": scene_beats,
+            "measurements": {"take_a": None, "take_b": None},
+            "ledger_diffs": [],
+        })
     judgments = []
     if args.judge:
         judge = FixtureJudge(bundle)
         judgments.append(settle(args.judge, judge.answer(args.judge)))
     result = {
         "scene_id": job.scene_id,
-        "verdict": overall_verdict([record] + [
+        "verdict": overall_verdict(records + [
             {"verdict": j["verdict"]} for j in judgments]),
-        "objects": [record],
+        "objects": records,
         "judgments": judgments,
     }
     if args.out_dir:

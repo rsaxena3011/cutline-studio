@@ -6,7 +6,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from src.compare.compare import compare_target
+from src.compare.compare import beat_flags, compare_target
 from src.segment.measurements import measure_mask
 from src.segment.segment import Segmentation
 from tests.test_ledger import make_ledger
@@ -98,6 +98,34 @@ class TestCompareRules(unittest.TestCase):
             "brass lamp")
         self.assertEqual(record["verdict"], "BLOCK")
         self.assertIn("mask_moved", {f["rule"] for f in record["flags"]})
+
+    def test_area_rule_uses_frame_share_not_pixels(self):
+        # Review round 2, R2-02: the same relative object in a
+        # half-resolution take has a quarter of the pixels but the
+        # same share of the frame. That is not a size change.
+        a = make_ledger("take_a")
+        b = make_ledger("take_b")
+        big = np.zeros((100, 200), dtype=bool)
+        big[10:30, 50:70] = True
+        small = np.zeros((50, 100), dtype=bool)
+        small[5:15, 25:35] = True
+        record = compare_target(a, b, seg(True, big), seg(True, small),
+                                "brass lamp")
+        self.assertEqual(record["verdict"], "ALLOW")
+        self.assertEqual(record["flags"], [])
+
+    def test_beat_mismatch_flags_review(self):
+        # Review round 2, R2-01: a beat observed in one take and not
+        # the other used to vanish entirely. It now flags at scene
+        # level, at REVIEW severity.
+        a = make_ledger("take_a")
+        b = make_ledger("take_b")
+        b["beats"] = [{"beat": "intro", "observed": False}]
+        flags = beat_flags(a, b)
+        self.assertEqual(len(flags), 1)
+        self.assertEqual(flags[0]["rule"], "beat_mismatch")
+        self.assertEqual(flags[0]["severity"], "REVIEW")
+        self.assertEqual(beat_flags(a, a), [])
 
     def test_scene_mismatch_is_an_error(self):
         # Review round 1, R1-03: two takes of different scenes must

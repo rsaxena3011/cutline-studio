@@ -5,8 +5,10 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+from src.compare.compare import compare_target
 from src.judge.judge import FixtureJudge, settle, validate_judgment
 from src.ledger.ledger import validate_ledger
+from src.segment.segment import ColorKeySegmenter
 
 BUNDLE = os.path.join(os.path.dirname(__file__), "..", "fixtures", "studio_desk")
 
@@ -41,6 +43,22 @@ class TestFixtureBundle(unittest.TestCase):
         record = settle("jacket_identity", judge.answer("jacket_identity"))
         self.assertEqual(record["verdict"], "ALLOW")
         self.assertEqual(record["decision"], "same_item")
+
+    def test_plant_case_cannot_verify(self):
+        # Review round 2: the desk plant is in both ledgers as
+        # present and drawn in take_a only, so no mask can settle it.
+        # The bundle case demo beat 6 points at.
+        targets = read_json("targets.json")["objects"]
+        segmenter = ColorKeySegmenter(targets)
+        record = compare_target(
+            read_json("ledger_a.json"), read_json("ledger_b.json"),
+            segmenter.segment(os.path.join(BUNDLE, "take_a.png"),
+                              "desk plant"),
+            segmenter.segment(os.path.join(BUNDLE, "take_b.png"),
+                              "desk plant"),
+            "desk plant")
+        self.assertEqual(record["verdict"], "REVIEW")
+        self.assertEqual(record["flags"][0]["rule"], "cannot_verify")
 
     def test_fabricated_citations_fall_back_to_review(self):
         # Review round 1, R1-07: citations must resolve, not merely
