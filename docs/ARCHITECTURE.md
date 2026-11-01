@@ -9,14 +9,14 @@ ingest -> ledger -> segment -> compare -> judge -> review
 3. **Segment** (`src/segment/`): SAM 3.1 segments the target object in each still and in each sampled frame of a clip. Output per frame: mask, mask area, mask centroid, edge-contact flags.
 4. **Compare** (`src/compare/`): deterministic code diffs ledger fields and mask measurements across the two takes. Every difference it can prove becomes a candidate flag with the measurement attached.
 5. **Judge** (`src/judge/`): Muse Spark reviews the differences measurement cannot settle (identity across lighting, restyle versus replacement). A Spark flag must cite ledger lines and frame identifiers.
-6. **Review** (`src/ui/`): the editor sees each flag with its source frame, its mask, and its evidence, and accepts or rejects it. Two or three voice commands (accept, reject, next flag) drive the pass.
+6. **Review** (`src/ui/`): the editor sees each flag with its source frame, its mask, and its evidence, and accepts or rejects it. A voice-command pass (accept, reject, next flag) is planned as the hands-free layer; it is not built yet.
 
 ## Invariants
 
 - No flag without a mask, a measurement, or a quoted ledger line behind it.
 - An uncertain check is raised to the human, never passed silently.
 - Clips are judged per sampled frame. No identity is tracked across frames and no drift is reported as a tracked event.
-- Fixture mode is the default demo path. Every live call has a cached fixture fallback.
+- Fixture mode is the default demo path. A live call that fails, or returns no mask, produces a REVIEW, never a pass; there is no silent fallback from a failed live call to a fixture result.
 
 ## Non-goals
 
