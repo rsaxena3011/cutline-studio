@@ -1,0 +1,890 @@
+{
+  "suite": "Cutline Studio planted-case evaluation, beat 8",
+  "run_date": "2026-11-02",
+  "mode": "fixture (color-key segmentation, deterministic compare); no network calls",
+  "labels": "eval/cases.json, frozen before the run",
+  "scoring": "TEST_SET_DESIGN.md",
+  "summary": {
+    "planted_errors": 6,
+    "caught_block": 4,
+    "sent_to_review": 2,
+    "missed": 0,
+    "clean_controls": 4,
+    "near_misses": 2,
+    "false_alarms_block_on_clean_or_near_miss": 0,
+    "soft_alarms_review_on_clean_or_near_miss": 1,
+    "contract_cases": 2,
+    "contract_passed": 2,
+    "wall_seconds_all_cases": 1.583
+  },
+  "cases": [
+    {
+      "id": "P1",
+      "group": "planted",
+      "kind": "prop removed",
+      "object": "brass lamp",
+      "bundle": "fixtures/studio_desk",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "rules_fired": [
+        "object_missing"
+      ],
+      "measurements": {
+        "take_a": {
+          "area_px": 1765,
+          "area_fraction": 0.0076605902777777775,
+          "centroid": {
+            "x": 0.671875,
+            "y": 0.5465140069247718
+          },
+          "bbox": [
+            405,
+            162,
+            455,
+            255
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": null
+      },
+      "object_verdict": "BLOCK",
+      "outcome": "catch"
+    },
+    {
+      "id": "P2",
+      "group": "planted",
+      "kind": "logo cropped by the frame edge",
+      "object": "sponsor logo",
+      "bundle": "fixtures/studio_desk",
+      "expected": "REVIEW",
+      "actual": "REVIEW",
+      "rules_fired": [
+        "cropping_warning"
+      ],
+      "measurements": {
+        "take_a": {
+          "area_px": 7591,
+          "area_fraction": 0.03294704861111111,
+          "centroid": {
+            "x": 0.8526939797128177,
+            "y": 0.152834496992052
+          },
+          "bbox": [
+            470,
+            30,
+            620,
+            80
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": {
+          "area_px": 4735,
+          "area_fraction": 0.020551215277777778,
+          "centroid": {
+            "x": 0.9257975844772968,
+            "y": 0.15286870820133755
+          },
+          "bbox": [
+            545,
+            30,
+            639,
+            80
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": true,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": true,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        }
+      },
+      "object_verdict": "REVIEW",
+      "outcome": "half catch (sent to review)"
+    },
+    {
+      "id": "P3",
+      "group": "planted",
+      "kind": "prop moved horizontally",
+      "object": "brass lamp",
+      "bundle": "eval/bundles/moved_lamp",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "rules_fired": [
+        "mask_moved"
+      ],
+      "measurements": {
+        "take_a": {
+          "area_px": 1765,
+          "area_fraction": 0.0076605902777777775,
+          "centroid": {
+            "x": 0.671875,
+            "y": 0.5465140069247718
+          },
+          "bbox": [
+            405,
+            162,
+            455,
+            255
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": {
+          "area_px": 1765,
+          "area_fraction": 0.0076605902777777775,
+          "centroid": {
+            "x": 0.921875,
+            "y": 0.5465140069247718
+          },
+          "bbox": [
+            565,
+            162,
+            615,
+            255
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        }
+      },
+      "object_verdict": "BLOCK",
+      "outcome": "catch"
+    },
+    {
+      "id": "P4",
+      "group": "planted",
+      "kind": "prop moved vertically",
+      "object": "brass lamp",
+      "bundle": "eval/bundles/vertical_lamp",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "rules_fired": [
+        "mask_moved"
+      ],
+      "measurements": {
+        "take_a": {
+          "area_px": 1765,
+          "area_fraction": 0.0076605902777777775,
+          "centroid": {
+            "x": 0.671875,
+            "y": 0.5465140069247718
+          },
+          "bbox": [
+            405,
+            162,
+            455,
+            255
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": {
+          "area_px": 1765,
+          "area_fraction": 0.0076605902777777775,
+          "centroid": {
+            "x": 0.671875,
+            "y": 0.7965140069247718
+          },
+          "bbox": [
+            405,
+            252,
+            455,
+            345
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        }
+      },
+      "object_verdict": "BLOCK",
+      "outcome": "catch"
+    },
+    {
+      "id": "P5",
+      "group": "planted",
+      "kind": "prop resized",
+      "object": "brass lamp",
+      "bundle": "eval/bundles/grown_lamp",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "rules_fired": [
+        "mask_area_change"
+      ],
+      "measurements": {
+        "take_a": {
+          "area_px": 1765,
+          "area_fraction": 0.0076605902777777775,
+          "centroid": {
+            "x": 0.671875,
+            "y": 0.5465140069247718
+          },
+          "bbox": [
+            405,
+            162,
+            455,
+            255
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": {
+          "area_px": 3991,
+          "area_fraction": 0.017322048611111113,
+          "centroid": {
+            "x": 0.671875,
+            "y": 0.4676090648403352
+          },
+          "bbox": [
+            392,
+            116,
+            468,
+            255
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        }
+      },
+      "object_verdict": "BLOCK",
+      "outcome": "catch"
+    },
+    {
+      "id": "P6",
+      "group": "planted",
+      "kind": "locked garment changes colour",
+      "object": "presenter jacket",
+      "bundle": "eval/bundles/colour_drift",
+      "expected": "REVIEW",
+      "actual": "REVIEW",
+      "rules_fired": [
+        "cannot_verify"
+      ],
+      "measurements": {
+        "take_a": {
+          "area_px": 14651,
+          "area_fraction": 0.06358940972222223,
+          "centroid": {
+            "x": 0.1640625,
+            "y": 0.5555555555555556
+          },
+          "bbox": [
+            60,
+            120,
+            150,
+            280
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": null
+      },
+      "object_verdict": "REVIEW",
+      "outcome": "half catch (sent to review)"
+    },
+    {
+      "id": "C1",
+      "group": "clean",
+      "kind": "same item under changed light, settled by judgment",
+      "object": "presenter jacket",
+      "bundle": "fixtures/studio_desk",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "rules_fired": [],
+      "measurements": {
+        "take_a": {
+          "area_px": 14651,
+          "area_fraction": 0.06358940972222223,
+          "centroid": {
+            "x": 0.1640625,
+            "y": 0.5555555555555556
+          },
+          "bbox": [
+            60,
+            120,
+            150,
+            280
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": {
+          "area_px": 14651,
+          "area_fraction": 0.06358940972222223,
+          "centroid": {
+            "x": 0.1640625,
+            "y": 0.5555555555555556
+          },
+          "bbox": [
+            60,
+            120,
+            150,
+            280
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        }
+      },
+      "object_verdict": "ALLOW",
+      "judgment": {
+        "question": "jacket_identity",
+        "verdict": "ALLOW"
+      },
+      "outcome": "pass"
+    },
+    {
+      "id": "C2",
+      "group": "clean",
+      "kind": "identical takes, lamp",
+      "object": "brass lamp",
+      "bundle": "eval/bundles/identical",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "rules_fired": [],
+      "measurements": {
+        "take_a": {
+          "area_px": 1765,
+          "area_fraction": 0.0076605902777777775,
+          "centroid": {
+            "x": 0.671875,
+            "y": 0.5465140069247718
+          },
+          "bbox": [
+            405,
+            162,
+            455,
+            255
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": {
+          "area_px": 1765,
+          "area_fraction": 0.0076605902777777775,
+          "centroid": {
+            "x": 0.671875,
+            "y": 0.5465140069247718
+          },
+          "bbox": [
+            405,
+            162,
+            455,
+            255
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        }
+      },
+      "object_verdict": "ALLOW",
+      "outcome": "pass"
+    },
+    {
+      "id": "C3",
+      "group": "clean",
+      "kind": "identical takes, logo",
+      "object": "sponsor logo",
+      "bundle": "eval/bundles/identical",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "rules_fired": [],
+      "measurements": {
+        "take_a": {
+          "area_px": 7591,
+          "area_fraction": 0.03294704861111111,
+          "centroid": {
+            "x": 0.8526939797128177,
+            "y": 0.152834496992052
+          },
+          "bbox": [
+            470,
+            30,
+            620,
+            80
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": {
+          "area_px": 7591,
+          "area_fraction": 0.03294704861111111,
+          "centroid": {
+            "x": 0.8526939797128177,
+            "y": 0.152834496992052
+          },
+          "bbox": [
+            470,
+            30,
+            620,
+            80
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        }
+      },
+      "object_verdict": "ALLOW",
+      "outcome": "pass"
+    },
+    {
+      "id": "C4",
+      "group": "clean",
+      "kind": "same scene at half resolution",
+      "object": "brass lamp",
+      "bundle": "eval/bundles/half_res",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "rules_fired": [],
+      "measurements": {
+        "take_a": {
+          "area_px": 1765,
+          "area_fraction": 0.0076605902777777775,
+          "centroid": {
+            "x": 0.671875,
+            "y": 0.5465140069247718
+          },
+          "bbox": [
+            405,
+            162,
+            455,
+            255
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": {
+          "area_px": 462,
+          "area_fraction": 0.008020833333333333,
+          "centroid": {
+            "x": 0.6703125,
+            "y": 0.5473544973544974
+          },
+          "bbox": [
+            202,
+            81,
+            227,
+            127
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 320,
+            "height": 180
+          }
+        }
+      },
+      "object_verdict": "ALLOW",
+      "outcome": "pass"
+    },
+    {
+      "id": "N1",
+      "group": "near_miss",
+      "kind": "locked object claimed by the ledger but not drawable in one take",
+      "object": "desk plant",
+      "bundle": "fixtures/studio_desk",
+      "expected": "REVIEW",
+      "actual": "REVIEW",
+      "rules_fired": [
+        "cannot_verify"
+      ],
+      "measurements": {
+        "take_a": {
+          "area_px": 1030,
+          "area_fraction": 0.004470486111111111,
+          "centroid": {
+            "x": 0.765625,
+            "y": 0.5925
+          },
+          "bbox": [
+            472,
+            196,
+            508,
+            229
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": null
+      },
+      "object_verdict": "REVIEW",
+      "outcome": "soft alarm"
+    },
+    {
+      "id": "N2",
+      "group": "near_miss",
+      "kind": "logo close to the edge but fully inside",
+      "object": "sponsor logo",
+      "bundle": "eval/bundles/near_edge",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "rules_fired": [],
+      "measurements": {
+        "take_a": {
+          "area_px": 7591,
+          "area_fraction": 0.03294704861111111,
+          "centroid": {
+            "x": 0.8526939797128177,
+            "y": 0.152834496992052
+          },
+          "bbox": [
+            470,
+            30,
+            620,
+            80
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": {
+          "area_px": 7591,
+          "area_fraction": 0.03294704861111111,
+          "centroid": {
+            "x": 0.8683189797128177,
+            "y": 0.152834496992052
+          },
+          "bbox": [
+            480,
+            30,
+            630,
+            80
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        }
+      },
+      "object_verdict": "ALLOW",
+      "outcome": "pass"
+    },
+    {
+      "id": "K1",
+      "group": "contract",
+      "kind": "target object unrecorded in one ledger",
+      "object": "brass lamp",
+      "bundle": "eval/bundles/unrecorded",
+      "expected": "REVIEW",
+      "actual": "REVIEW",
+      "rules_fired": [
+        "cannot_verify"
+      ],
+      "measurements": {
+        "take_a": {
+          "area_px": 1765,
+          "area_fraction": 0.0076605902777777775,
+          "centroid": {
+            "x": 0.671875,
+            "y": 0.5465140069247718
+          },
+          "bbox": [
+            405,
+            162,
+            455,
+            255
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": {
+          "area_px": 1765,
+          "area_fraction": 0.0076605902777777775,
+          "centroid": {
+            "x": 0.671875,
+            "y": 0.5465140069247718
+          },
+          "bbox": [
+            405,
+            162,
+            455,
+            255
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        }
+      },
+      "object_verdict": "REVIEW",
+      "outcome": "pass"
+    },
+    {
+      "id": "K2",
+      "group": "contract",
+      "kind": "scene beat observed in one take only",
+      "object": "presenter jacket",
+      "bundle": "eval/bundles/beat_mismatch",
+      "expected": "REVIEW",
+      "actual": "REVIEW",
+      "rules_fired": [],
+      "measurements": {
+        "take_a": {
+          "area_px": 14651,
+          "area_fraction": 0.06358940972222223,
+          "centroid": {
+            "x": 0.1640625,
+            "y": 0.5555555555555556
+          },
+          "bbox": [
+            60,
+            120,
+            150,
+            280
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        },
+        "take_b": {
+          "area_px": 14651,
+          "area_fraction": 0.06358940972222223,
+          "centroid": {
+            "x": 0.1640625,
+            "y": 0.5555555555555556
+          },
+          "bbox": [
+            60,
+            120,
+            150,
+            280
+          ],
+          "edge_contact": {
+            "left": false,
+            "right": false,
+            "top": false,
+            "bottom": false
+          },
+          "touches_edge": false,
+          "frame": {
+            "width": 640,
+            "height": 360
+          }
+        }
+      },
+      "object_verdict": "ALLOW",
+      "scene_beat_flags": [
+        "beat_mismatch"
+      ],
+      "outcome": "pass"
+    }
+  ],
+  "sam_stills_live_case": {
+    "source": "SAM_TEST_2026-11-01/attempt3_mask_analysis.json (live attempt 3, 2026-11-01; recorded numbers copied)",
+    "mask_pixels": 266305,
+    "frame_coverage_fraction": 0.2335,
+    "mask_mass_inside_gt_lamp_bbox": 0.991,
+    "gt_shade_bbox_covered": 0.684,
+    "gt_lamp_bbox_covered": 0.2664,
+    "mask_bbox_normalized_1000": {
+      "x_min": 0,
+      "y_min": 24,
+      "x_max": 896,
+      "y_max": 999
+    },
+    "gt_lamp_bbox_normalized_1000": {
+      "x_min": 0,
+      "y_min": 40,
+      "x_max": 905,
+      "y_max": 1000
+    },
+    "bbox_iou_derived_from_recorded_boxes": 0.973
+  }
+}
