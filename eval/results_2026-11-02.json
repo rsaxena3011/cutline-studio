@@ -15,7 +15,7 @@
     "soft_alarms_review_on_clean_or_near_miss": 1,
     "contract_cases": 2,
     "contract_passed": 2,
-    "wall_seconds_all_cases": 1.583
+    "wall_seconds_all_cases": 1.854
   },
   "cases": [
     {
